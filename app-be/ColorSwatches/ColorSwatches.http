@@ -1,0 +1,6 @@
+@ColorSwatches_HostAddress = http://localhost:5075
+
+GET {{ColorSwatches_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

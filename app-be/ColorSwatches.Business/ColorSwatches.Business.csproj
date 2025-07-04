@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Marten" Version="7.36.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="ShopifySharp" Version="6.21.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ColorSwatches.Entities\ColorSwatches.Entities.csproj" />
+      <ProjectReference Include="..\ColorSwatches.Infrastructure\ColorSwatches.Infrastructure.csproj" />
+      <ProjectReference Include="..\ColorSwatches.Models\ColorSwatches.Models.csproj" />
+      <ProjectReference Include="..\ColorSwatches.Shared\ColorSwatches.Shared.csproj" />
+    </ItemGroup>
+    
+</Project>

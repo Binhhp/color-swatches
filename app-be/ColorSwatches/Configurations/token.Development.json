@@ -1,0 +1,8 @@
+{
+  "TokenSetting": {
+    "JwtSecretKey": "Ddh21GymKPpZ1Mhzf49LkkYbBQf2Vl09",
+    "TokenExpirationInMinutes": 1440,
+    "JwtIssuer": "orichi",
+    "JwtAudience": "Core_App_By_Orichi"
+  }
+}

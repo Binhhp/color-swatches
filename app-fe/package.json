@@ -1,0 +1,49 @@
+{
+  "name": "core-fe",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev:staging": "vite --mode staging",
+    "dev:production": "vite --mode production",
+    "build:staging": "tsc -b && vite build --mode staging",
+    "build:production": "tsc -b && vite build --mode production",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@shopify/app-bridge-react": "^4.1.10",
+    "@shopify/app-bridge-utils": "^3.5.1",
+    "@shopify/polaris": "^13.9.5",
+    "@tailwindcss/vite": "^4.1.10",
+    "@tanstack/react-query": "^5.80.7",
+    "@tanstack/react-router": "^1.121.16",
+    "@tanstack/zod-adapter": "^1.121.16",
+    "axios": "^1.10.0",
+    "path": "^0.12.7",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.1.10",
+    "zod": "^3.25.64",
+    "zustand": "^5.0.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.0",
+    "@shopify/app-bridge-types": "^0.0.18",
+    "@shopify/app-bridge-ui-types": "^0.1.1",
+    "@tanstack/react-query-devtools": "^5.80.7",
+    "@tanstack/react-router-devtools": "^1.121.16",
+    "@tanstack/router-plugin": "^1.121.16",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react-swc": "^3.9.0",
+    "eslint": "^9.25.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.30.1",
+    "vite": "^6.3.5"
+  }
+}

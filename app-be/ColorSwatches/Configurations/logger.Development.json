@@ -1,0 +1,8 @@
+{
+  "LoggerSetting": {
+    "AppName": "Orichi.Core.WebApi",
+    "WriteToFile": true,
+    "StructuredConsoleLogging": true,
+    "Path": "Logs/log-.txt"
+  }
+}
