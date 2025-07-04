@@ -15,7 +15,6 @@
     <ItemGroup>
       <ProjectReference Include="..\ColorSwatches.Entities\ColorSwatches.Entities.csproj" />
       <ProjectReference Include="..\ColorSwatches.Infrastructure\ColorSwatches.Infrastructure.csproj" />
-      <ProjectReference Include="..\ColorSwatches.Models\ColorSwatches.Models.csproj" />
       <ProjectReference Include="..\ColorSwatches.Shared\ColorSwatches.Shared.csproj" />
     </ItemGroup>
     

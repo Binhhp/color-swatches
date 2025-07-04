@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorSwatches", "ColorSwatches\ColorSwatches.csproj", "{F874FB0C-3C8B-48A0-93F5-9F0D99DA4F4D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorSwatches.Business", "ColorSwatches.Business\ColorSwatches.Business.csproj", "{F52535DC-D38E-4799-B5E5-D5F9FD5F2BE9}"
@@ -7,8 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorSwatches.Entities", "ColorSwatches.Entities\ColorSwatches.Entities.csproj", "{19902EC4-EA17-4849-9B59-23DDCD859845}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorSwatches.Infrastructure", "ColorSwatches.Infrastructure\ColorSwatches.Infrastructure.csproj", "{49CF500A-922B-43A3-90D7-6CBE40355034}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorSwatches.Models", "ColorSwatches.Models\ColorSwatches.Models.csproj", "{2C18F329-D263-4D18-960E-5EFDF5F316B3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorSwatches.Shared", "ColorSwatches.Shared\ColorSwatches.Shared.csproj", "{BB2A9B1D-F250-4CDB-82DE-F26C0637DB0E}"
 EndProject
@@ -36,10 +37,6 @@ Global
 		{49CF500A-922B-43A3-90D7-6CBE40355034}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49CF500A-922B-43A3-90D7-6CBE40355034}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49CF500A-922B-43A3-90D7-6CBE40355034}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2C18F329-D263-4D18-960E-5EFDF5F316B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C18F329-D263-4D18-960E-5EFDF5F316B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2C18F329-D263-4D18-960E-5EFDF5F316B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2C18F329-D263-4D18-960E-5EFDF5F316B3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BB2A9B1D-F250-4CDB-82DE-F26C0637DB0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BB2A9B1D-F250-4CDB-82DE-F26C0637DB0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB2A9B1D-F250-4CDB-82DE-F26C0637DB0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -48,5 +45,8 @@ Global
 		{B282014B-2CF5-48DD-A079-B3F869160BD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B282014B-2CF5-48DD-A079-B3F869160BD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B282014B-2CF5-48DD-A079-B3F869160BD8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
