@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Security.Claims;
-using ColorSwatches.Models.Response;
+using ColorSwatches.Business.Dtos.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ColorSwatches.Controllers;

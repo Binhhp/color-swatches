@@ -3,9 +3,9 @@ using Microsoft.OpenApi.Models;
 
 namespace ColorSwatches.Infrastructure.Swagger;
 
-internal static class Startup
+public static class Startup
 {
-    internal static IServiceCollection AddSwagger(this IServiceCollection services)
+    public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
         return services.AddSwaggerGen(option =>
         {
@@ -13,9 +13,9 @@ internal static class Startup
                 "v1",
                 new OpenApiInfo
                 {
-                    Title = "Core API",
+                    Title = "Color Swatches API",
                     Version = "v1",
-                    Description = "An ASP.NET Core Web API for managing Core App",
+                    Description = "An ASP.NET Core Web API for managing color swatches",
                     Contact = new OpenApiContact
                     {
                         Name = "Orichi eCommerce",
@@ -51,10 +51,6 @@ internal static class Startup
                     },
                 }
             );
-            var xmlFile = "ColorSwatches.xml";
-            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
-            option.IncludeXmlComments(xmlPath);
         });
     }
 }

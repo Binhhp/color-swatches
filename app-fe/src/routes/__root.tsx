@@ -28,7 +28,7 @@ export const Route = createRootRouteWithContext<{
         throw redirect({
           to: "/error",
           search: {
-            message: error.message || "Failed to load shop data. Please try again."
+            message: error?.message || "Failed to load shop data. Please try again."
           }
         });
       }

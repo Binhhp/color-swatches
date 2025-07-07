@@ -7,6 +7,7 @@ using ColorSwatches.Infrastructure.Auth;
 using ColorSwatches.Infrastructure.Filters;
 using ColorSwatches.Infrastructure.Logging;
 using ColorSwatches.Infrastructure.MvcExtensions;
+using ColorSwatches.Infrastructure.Swagger;
 using ColorSwatches.Shared.Configurations;
 using ColorSwatches.Validator;
 using Microsoft.AspNetCore.Mvc;
@@ -42,9 +43,15 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddHttpClient();
+
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddSwagger();
+
 builder.Services.RegisterDatabase(builder.Configuration);
+
 builder.Services.AddOpenApi(
     "v1",
     options =>
@@ -92,6 +99,13 @@ app.MapControllers();
 app.MapGet("/", HandleIndex);
 
 app.MapFallback(HandleIndex);
+
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.DisplayRequestDuration();
+});
+
 
 async Task HandleIndex(HttpContext context, IOptions<CoreConfiguration> options)
 {

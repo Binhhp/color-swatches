@@ -28,7 +28,10 @@ public class CommonService(
                 Currency = s.Currency,
                 Id = s.Id,
             })
-            .SingleAsync();
+            .SingleOrDefaultAsync();
+
+        shop.ThenThrowIfNull(Exceptions.NotFound(domain));
+
         var token = tokenService.GenerateJwt(domain, shop.Id);
 
         return new ShopInfoResponse(shop, token);

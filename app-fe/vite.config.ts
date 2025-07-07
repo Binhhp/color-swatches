@@ -16,5 +16,14 @@ export default defineConfig({
   ],
   resolve: {
     alias: [{ find: "@", replacement: "/src" }]
+  },
+  build: {
+    outDir: "../app-be/ColorSwatches/wwwroot",
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
   }
 });

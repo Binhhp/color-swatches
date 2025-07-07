@@ -63,16 +63,16 @@ public class HomeService(
 
         session.Store(newWebhook);
 
-        await settingService.UpsertAppStatusMetafield(
-            new UpsertAppStatusModel(
-                metafieldsConfiguration.Value.AppStatus,
-                metafieldsConfiguration.Value.Namespace,
-                true,
-                newStore.ShopId,
-                newStore.Domain,
-                newStore.Token
-            )
-        );
+        //await settingService.UpsertAppStatusMetafield(
+        //    new UpsertAppStatusModel(
+        //        metafieldsConfiguration.Value.AppStatus,
+        //        metafieldsConfiguration.Value.Namespace,
+        //        true,
+        //        newStore.ShopId,
+        //        newStore.Domain,
+        //        newStore.Token
+        //    )
+        //);
 
         await session.SaveChangesAsync();
 
