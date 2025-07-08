@@ -4,6 +4,7 @@ import { create } from "zustand";
 
 import CommonApi from "@/apis/common.api";
 import type { ShopDataResponse, ShopInfoDto } from "@/models/common/shop-data.model";
+import type { OptionSetting } from "@/models/common/setting.model";
 
 type State = {
   authAxios: AxiosInstance;
@@ -11,6 +12,7 @@ type State = {
   isAdmin: boolean;
   isLoading: boolean;
   isEnableTheme: boolean;
+  options: OptionSetting[];
 };
 
 type Action = {
@@ -18,6 +20,7 @@ type Action = {
   getShop: (shopDomain: string) => Promise<ShopInfoDto["shop"] | undefined>;
   setIsAdmin: (isAdmin: boolean) => void;
   setIsEnableTheme: (isEnableTheme: boolean) => void;
+  getOptions: () => Promise<void>;
 };
 
 const rootStore = create<State & Action>((set, get) => ({
@@ -29,6 +32,7 @@ const rootStore = create<State & Action>((set, get) => ({
   shop: null,
   isAdmin: false,
   isEnableTheme: true,
+  options: [],
 
   addInterceptorAxios: (jwt: string) => {
     const instance = get().authAxios;
@@ -47,6 +51,13 @@ const rootStore = create<State & Action>((set, get) => ({
       }
     );
     set({ authAxios: instance });
+  },
+
+  getOptions: async () => {
+    const response = await CommonApi.GetOptionSetting();
+    if (response?.length) {
+      set({ options: response });
+    }
   },
 
   getShop: async (domain: string) => {

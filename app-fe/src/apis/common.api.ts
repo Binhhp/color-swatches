@@ -50,4 +50,12 @@ export default class CommonApi {
     });
     return response.result;
   }
+
+  static async CheckThemeEnabled() {
+    const response = await ApiHandler<boolean>({
+      method: "GET",
+      url: "/common/theme-enabled"
+    });
+    return response.result;
+  }
 }
