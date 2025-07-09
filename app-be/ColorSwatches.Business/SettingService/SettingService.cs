@@ -83,12 +83,11 @@ public class SettingService(
     {
         return new OptionSetting
         {
-            ProductOptionId = option.Id,
+            Name = option.Name,
+            ProductOptionId = option.Id.Replace("gid://shopify/ProductOption/", ""),
             ProductId = product.Id,
             StoreId = storeId,
             IsActive = false,
-            Template = OptionSettingTemplate.Swatch,
-            Style = OptionSettingStyle.Color,
             Animation = new OptionSettingAnimation
             {
                 HoverAnimation = OptionSettingHoverAnimation.Label,
@@ -102,7 +101,7 @@ public class SettingService(
                 Image = "",
                 Style = OptionSettingStyleValue.Circle,
             }).ToArray(),
-            Position = new string[] { OptionSettingPosition.Homepage, OptionSettingPosition.ProductPage, OptionSettingPosition.CollectionPage },
+            Position = new string[] { },
             Appearance = new OptionSettingAppearance
             {
                 Height = "30px",

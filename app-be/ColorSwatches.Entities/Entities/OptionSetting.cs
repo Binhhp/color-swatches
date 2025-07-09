@@ -2,6 +2,7 @@ namespace ColorSwatches.Entities.Entities;
 public class OptionSetting
 {
     public Guid Id { get; set; }
+    public string Name { get; set; }
     public string? ProductOptionId { get; set; }
     public string ProductId { get; set; }
     public bool IsActive { get; set; }

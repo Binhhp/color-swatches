@@ -31,6 +31,7 @@ export interface OptionSettingAnimation {
 
 export interface OptionSetting {
   id: string;
+  name: string;
   productOptionId?: string;
   productId: string;
   isActive: boolean;

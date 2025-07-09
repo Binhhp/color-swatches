@@ -15,7 +15,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
 import { appBlock } from "@/utils/config";
 import rootStore from "@/stores/root";
 
-const SetupGuide: React.FC = () => {
+const SetupGuide: React.FC<{ onShowOptionSettings: () => void }> = ({ onShowOptionSettings }) => {
   const { shop } = rootStore();
 
   const [firstTime, setFirstTime] = React.useState(true);
@@ -32,6 +32,7 @@ const SetupGuide: React.FC = () => {
   const handleConfigureOptions = () => {
     if (!shop?.domain) return;
     setCompletedSteps(2);
+    onShowOptionSettings();
   };
 
   const handleCustomizeSwatches = () => {

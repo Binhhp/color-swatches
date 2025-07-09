@@ -34,6 +34,10 @@ public class CommonService(
 
         var token = tokenService.GenerateJwt(domain, shop.Id);
 
+        shop.IsSettingOption = session
+            .Query<OptionSetting>()
+            .Any();
+
         return new ShopInfoResponse(shop, token);
     }
 

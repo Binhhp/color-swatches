@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+body {
+  --p-color-bg: #ffffff;
+}
+
 .recommended-apps span[role="img"] {
   width: 50px;
 }
@@ -16,4 +20,23 @@
   --pc-button-color_disabled: var(--p-color-text-brand-on-bg-fill-disabled);
   --pc-button-icon-fill: var(--p-color-text-brand-on-bg-fill);
   --pc-button-icon-fill_disabled: var(--p-color-text-brand-on-bg-fill-disabled);
+}
+.option-setting-list .Polaris-InlineStack {
+  justify-content: end;
+}
+
+.option-setting-list #previousURL,
+.option-setting-list #nextURL {
+  background-color: transparent !important;
+}
+
+.option-active .Polaris-Button {
+  --pc-button-box-shadow: var(--p-shadow-button);
+  --pc-button-box-shadow_active: var(--p-shadow-button-inset);
+  --pc-button-bg: var(--p-color-bg-fill);
+  --pc-button-bg_hover: var(--p-color-bg-fill-hover);
+  --pc-button-bg_active: var(--p-color-bg-fill-active);
+  --pc-button-bg_pressed: var(--p-color-bg-fill-selected);
+  --pc-button-color: var(--p-color-text);
+  --pc-button-icon-fill: var(--p-color-icon);
 }

@@ -1,6 +1,7 @@
 import CommonApi from "@/apis/common.api";
 import EnableApp from "@/components/home/enable-app";
 import SetupGuide from "@/components/home/setup-guide";
+import OptionSettingsTable from "@/components/option-settings";
 import RecommendedApp from "@/components/recommended-app";
 import VideoTutorials from "@/components/video-tutorials";
 import rootStore from "@/stores/root";
@@ -9,25 +10,29 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/")({
-  component: Index
+  component: Index,
+  loader: async () => {
+    const isEnabled = await CommonApi.CheckThemeEnabled();
+    return { isEnabled };
+  }
 });
 
 function Index() {
+  const { isEnabled } = Route.useLoaderData();
+  const { shop } = rootStore();
   const [isEnableApp, setIsEnableApp] = useState<boolean | undefined>(undefined);
   const handleDismiss = () => {
     setIsEnableApp(true);
   };
 
-  const { getOptions } = rootStore();
-  const fetchOptions = async () => {
-    await getOptions();
-    const isEnabled = await CommonApi.CheckThemeEnabled();
-    setIsEnableApp(isEnabled ?? false);
-  };
-
   useEffect(() => {
-    fetchOptions();
+    setIsEnableApp(isEnabled ?? false);
   }, []);
+
+  const [showOptionSettings, setShowOptionSettings] = useState(true);
+  const handleShowOptionSettings = () => {
+    setShowOptionSettings(!showOptionSettings);
+  };
 
   return (
     <Page
@@ -39,9 +44,16 @@ function Index() {
           <EnableApp onDismiss={handleDismiss} />
         </div>
       )}
-      <div className='mb-5'>
-        <SetupGuide />
-      </div>
+      {showOptionSettings && (
+        <div className='mb-5'>
+          <OptionSettingsTable />
+        </div>
+      )}
+      {!showOptionSettings && !shop?.isSettingOption && (
+        <div className='mb-5'>
+          <SetupGuide onShowOptionSettings={handleShowOptionSettings} />
+        </div>
+      )}
       <div className='mb-5'>
         <VideoTutorials />
       </div>

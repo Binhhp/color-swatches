@@ -4,6 +4,7 @@ export interface ShopDataResponse {
   shopifyPlan: string;
   active: boolean;
   currency: string;
+  isSettingOption: boolean;
 }
 
 export interface ShopInfoDto {

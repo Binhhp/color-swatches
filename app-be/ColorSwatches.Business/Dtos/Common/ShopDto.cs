@@ -15,4 +15,7 @@ public class ShopDto
 
     [JsonPropertyName("currency")]
     public string Currency { get; set; }
+
+    [JsonPropertyName("isSettingOption")]
+    public bool IsSettingOption { get; set; }
 }

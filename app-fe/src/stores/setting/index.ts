@@ -26,6 +26,8 @@ type SettingAction = {
 
   // Option Settings Actions
   getOptionSettings: () => Promise<OptionSetting[] | undefined>;
+  getOptionById: (id: string) => OptionSetting | undefined;
+
   upsertOptionSettings: (
     request: UpsertOptionSettingRequest
   ) => Promise<OptionSetting[] | undefined>;
@@ -44,7 +46,7 @@ const initialState: SettingState = {
   isLoading: false
 };
 
-const settingStore = create<SettingState & SettingAction>((set) => ({
+const settingStore = create<SettingState & SettingAction>((set, get) => ({
   ...initialState,
 
   // App Status Actions
@@ -110,6 +112,12 @@ const settingStore = create<SettingState & SettingAction>((set) => ({
       });
       return undefined;
     }
+  },
+
+  getOptionById: (id: string) => {
+    const { optionSettings } = get();
+    const option = optionSettings.find((option) => option.productOptionId === id);
+    return option;
   },
 
   upsertOptionSettings: async (request: UpsertOptionSettingRequest) => {

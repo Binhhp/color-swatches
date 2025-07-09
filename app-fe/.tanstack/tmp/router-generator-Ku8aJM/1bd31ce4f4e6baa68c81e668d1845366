@@ -1,0 +1,10 @@
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/option-detail")({
+  component: Index
+});
+
+function Index() {
+  const { id } = Route.useParams();
+  return <div>Hello "/options/:id" {id}!</div>;
+}
