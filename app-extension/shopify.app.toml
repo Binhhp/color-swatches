@@ -1,0 +1,30 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "1a2bcd75c4089470b6a4a9ca03d33198"
+name = "Development Color Swatches"
+handle = "development-color-swatches"
+application_url = "https://localhost:44335/"
+embedded = true
+
+[build]
+include_config_on_deploy = true
+
+[webhooks]
+api_version = "2025-07"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks/app/uninstalled"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/scopes_update" ]
+  uri = "/webhooks/app/scopes_update"
+
+[auth]
+redirect_urls = [
+  "https://localhost:44335/api/home/auth",
+  "https://localhost:44335/api/webhook/uninstall"
+]
+
+[pos]
+embedded = false
