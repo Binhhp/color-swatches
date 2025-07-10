@@ -77,6 +77,14 @@ export const OptionSettingsDetail: FC<{
   const styleOptions =
     templateOptions.find((t) => t.value === (option?.template ?? "Swatch"))?.options ?? [];
 
+  const handlePositionChange = (pos: string, checked: boolean) => {
+    if (!option) return;
+    setOption({
+      ...option,
+      position: checked ? [...option.position, pos] : option.position.filter((p) => p !== pos)
+    });
+  };
+
   return (
     <Page
       backAction={{
@@ -125,7 +133,7 @@ export const OptionSettingsDetail: FC<{
               </Text>
             </BlockStack>
             <div className='flex flex-col gap-4'>
-              <div className='flex flex-row gap-5 option-setting-template'>
+              <div className='flex flex-row gap-5 justify-between items-end option-setting-template'>
                 <Select
                   label='Template'
                   options={templateOptions.map((x) => ({
@@ -153,6 +161,7 @@ export const OptionSettingsDetail: FC<{
                       key={pos}
                       label={positionMap[pos]}
                       checked={option.position.includes(pos)}
+                      onChange={(checked) => handlePositionChange(pos, checked)}
                     />
                   ))}
                 </div>

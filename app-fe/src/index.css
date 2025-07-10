@@ -40,3 +40,16 @@ body {
   --pc-button-color: var(--p-color-text);
   --pc-button-icon-fill: var(--p-color-icon);
 }
+.option-setting-template{
+  min-width: 450px;
+}
+.option-setting-template div {
+  flex: 1;
+}
+
+.option-setting-template .Polaris-Button {
+  height: max-content;
+}
+.option-setting-upload .Polaris-Button {
+  border: 1px dashed #8A8A8A;
+}

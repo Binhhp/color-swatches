@@ -3,12 +3,7 @@ import { IndexTable, Text, Button, LegacyCard } from "@shopify/polaris";
 import type { OptionValue as OptionValueModel } from "@/models/common/setting.model";
 import type { IndexTableHeading } from "@shopify/polaris/build/ts/src/components/IndexTable";
 import type { NonEmptyArray } from "@shopify/polaris/build/ts/src/types";
-
-const PreviewIcon = () => (
-  <span role='img' aria-label='preview'>
-    🖼️
-  </span>
-);
+import { UploadIcon } from "@shopify/polaris-icons";
 
 export const OptionValue: FC<{ values: OptionValueModel[] }> = ({ values }) => {
   const headings: NonEmptyArray<IndexTableHeading> = [
@@ -29,13 +24,20 @@ export const OptionValue: FC<{ values: OptionValueModel[] }> = ({ values }) => {
             <IndexTable.Cell className='text-center'>
               <Text as='span'>{v.value}</Text>
             </IndexTable.Cell>
-            <IndexTable.Cell className='text-center'>
-              <PreviewIcon />
+            <IndexTable.Cell className='flex'>
+              <div className='option-setting-preview flex justify-center pt-2 pb-2'>
+                <img src={v.image} />
+              </div>
             </IndexTable.Cell>
             <IndexTable.Cell className='text-center'>
-              <Button size='slim' variant='tertiary'>
-                Customize
-              </Button>
+              <div className='option-setting-upload flex justify-center pt-2 pb-2'>
+                <Button
+                  icon={UploadIcon as any}
+                  size='large'
+                  variant='tertiary'
+                  accessibilityLabel='Upload'
+                />
+              </div>
             </IndexTable.Cell>
           </IndexTable.Row>
         ))}
