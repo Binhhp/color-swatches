@@ -40,7 +40,7 @@ body {
   --pc-button-color: var(--p-color-text);
   --pc-button-icon-fill: var(--p-color-icon);
 }
-.option-setting-template{
+.option-setting-template {
   min-width: 450px;
 }
 .option-setting-template div {
@@ -51,5 +51,11 @@ body {
   height: max-content;
 }
 .option-setting-upload .Polaris-Button {
-  border: 1px dashed #8A8A8A;
+  border: 1px dashed #8a8a8a;
+  box-sizing: border-box;
+  height: max-content;
+}
+
+.customize-preview .Polaris-ShadowBevel {
+  height: 100%;
 }

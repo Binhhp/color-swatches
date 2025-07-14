@@ -1,5 +1,5 @@
 import type { OptionSetting } from "@/models/common/setting.model";
-import { type FC } from "react";
+import { type FC, useState } from "react";
 import {
   Page,
   Text,
@@ -14,6 +14,7 @@ import {
 import { UriProvider } from "@/utils/uri-provider";
 import { useNavigate } from "@tanstack/react-router";
 import { OptionValue } from "./option-value";
+import CustomizeModal from "./customize-modal";
 
 const positionMap: Record<string, string> = {
   "home-page": "Home page",
@@ -66,16 +67,16 @@ export const OptionSettingsDetail: FC<{
     navigate({ to: UriProvider.KeepParameters("/") });
   };
 
+  const styleOptions =
+    templateOptions.find((t) => t.value === (option?.template ?? "Swatch"))?.options ?? [];
+
   const handleTemplateChange = (value: string) => {
-    setOption({ ...option, template: value as string });
+    setOption({ ...option, template: value as string, style: styleOptions[0]?.value ?? "Color" });
   };
 
   const handleStyleChange = (value: string) => {
     setOption({ ...option, style: value as string });
   };
-
-  const styleOptions =
-    templateOptions.find((t) => t.value === (option?.template ?? "Swatch"))?.options ?? [];
 
   const handlePositionChange = (pos: string, checked: boolean) => {
     if (!option) return;
@@ -85,8 +86,11 @@ export const OptionSettingsDetail: FC<{
     });
   };
 
+  const [openCustomize, setOpenCustomize] = useState(false);
+
   return (
     <Page
+      primaryAction={<Button variant='primary'>Save</Button>}
       backAction={{
         content: option?.name || "Option",
         onAction: handleBack
@@ -94,7 +98,15 @@ export const OptionSettingsDetail: FC<{
       title={option?.name || "Option"}
       subtitle={`${option?.values?.length ?? 0} value`}
     >
+      <CustomizeModal
+        setOption={setOption}
+        open={openCustomize}
+        onClose={() => setOpenCustomize(false)}
+        option={option}
+      />
+
       {!option && <SkeletonBodyText lines={8} />}
+
       {option && (
         <BlockStack gap='400'>
           {/* Active widget */}
@@ -146,10 +158,12 @@ export const OptionSettingsDetail: FC<{
                 <Select
                   label='Style'
                   options={styleOptions}
-                  value={styleOptions[0]?.value ?? "Color"}
+                  value={option.style ?? "Color"}
                   onChange={handleStyleChange}
                 />
-                <Button size='medium'>Customize</Button>
+                <Button size='medium' onClick={() => setOpenCustomize(true)}>
+                  Customize
+                </Button>
               </div>
               <div className='flex flex-col gap-3.5'>
                 <Text variant='bodyMd' as='span' tone='subdued'>
@@ -173,7 +187,7 @@ export const OptionSettingsDetail: FC<{
             <Divider borderColor='border' />
           </div>
           {/* Table value/preview */}
-          <OptionValue values={option.values || []} />
+          <OptionValue option={option} setOption={setOption} />
         </BlockStack>
       )}
     </Page>
