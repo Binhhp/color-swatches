@@ -41,4 +41,12 @@ public class SettingController(ISettingService settingService) : CoreControllerB
         var response = await settingService.UpsertOptionSetting(GetStoreId(), request);
         return SuccessResponse(response);
     }
+
+    [HttpDelete]
+    [Route("options")]
+    public async Task<IActionResult> DeleteOptionSetting([FromBody] DeleteOptionSettingRequest request)
+    {
+        var response = await settingService.DeleteOptionSetting(GetStoreId(), request.OptionSettingIds);
+        return SuccessResponse(response);
+    }
 }

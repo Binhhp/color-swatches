@@ -9,16 +9,17 @@ using ColorSwatches.Shared.Configurations;
 using Marten;
 using Marten.Patching;
 using Microsoft.Extensions.Options;
-using NetTopologySuite.Index.HPRtree;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Serilog;
 
 namespace ColorSwatches.Business.SettingService;
 
 public class SettingService(
     IDocumentSession session,
     IShopifyClient shopifyClient,
-    IOptions<MetafieldsConfiguration> metafieldsConfiguration
+    IOptions<MetafieldsConfiguration> metafieldsConfiguration,
+    ILogger logger
 ) : ISettingService
 {
     public async Task<List<OptionSetting>> GetOptionSetting(Guid storeId)
@@ -125,10 +126,17 @@ public class SettingService(
 
         store.ThenThrowIfNull(Exceptions.NotFound(storeId.ToString()));
 
-        var optionSettingQuery = session.Query<OptionSetting>().Where(s => s.StoreId == storeId).ToList();
+        var optionSettings = session.Query<OptionSetting>().Where(s => s.StoreId == storeId).ToList();
 
-        var optionSettings = optionSettingQuery.Any() ? optionSettingQuery.ToList() : new List<OptionSetting>();
-
+        if (optionSettings.Any())
+        {
+            foreach(var item in optionSettings)
+            {
+                session.Delete(item);
+            }
+            await session.SaveChangesAsync();
+        }
+        
         foreach (var item in request.OptionSettings)
         {
             var existingItem = optionSettings.FirstOrDefault(s => s.ProductOptionId == item.ProductOptionId);
@@ -137,7 +145,7 @@ public class SettingService(
                 item.DateCreated = existingItem.DateCreated;
                 item.DateModified = DateTime.UtcNow;
                 item.Id = existingItem.Id;
-                existingItem = item;
+                optionSettings.Add(item);
                 continue;
             }
 
@@ -149,36 +157,134 @@ public class SettingService(
         session.Store(optionSettings.ToArray());
         await session.SaveChangesAsync();
 
-        var jsonOptions = new JsonSerializerSettings
-        {
-            StringEscapeHandling = StringEscapeHandling.Default,
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            Formatting = Formatting.None,
-        };
-
         var metafieldValue = JsonConvert.SerializeObject(
-            request.OptionSettings,
-            jsonOptions
+            optionSettings,
+            new JsonSerializerSettings
+            {
+                StringEscapeHandling = StringEscapeHandling.Default,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.None,
+            }
         );
 
-        var statusMetafield = new Dictionary<string, string>
+        var optionSettingMetafield = new Dictionary<string, string>
         {
             { "key", "option_setting" },
             { "namespace", metafieldsConfiguration.Value.Namespace },
             { "value", metafieldValue },
             { "type", "json" },
-            { "ownerId", $"gid://shopify/Shop/{storeId}" },
+            { "ownerId", $"gid://shopify/Shop/{store.ShopId}" },
         };
 
         var requestBody = new
         {
             query = Metafields.MetafieldsSetMutation,
-            variables = new { metafields = new List<dynamic> { statusMetafield } },
+            variables = new { metafields = new List<dynamic> { optionSettingMetafield } },
         };
 
-        await shopifyClient.RequestToShopify(store.Domain, store.Token, requestBody);
+        try
+        {
+            await shopifyClient.RequestToShopify(store.Domain, store.Token, requestBody);
+        }
+        catch(Exception ex)
+        {
+            logger.Error(ex, $"Could not save setting to shopify metafields for store {store}");
+        }
 
         return request.OptionSettings;
+    }
+
+    public async Task<List<OptionSetting>> DeleteOptionSetting(Guid storeId, List<Guid> optionSettingIds)
+    {
+        var store = await session
+            .Query<Store>()
+            .Where(s => s.Id == storeId)
+            .SingleOrDefaultAsync();
+
+        store.ThenThrowIfNull(Exceptions.NotFound(storeId.ToString()));
+
+        var optionSettings = session.Query<OptionSetting>().Where(s => s.StoreId == storeId).ToList();
+
+        if (!optionSettings.Any())
+        {
+            return optionSettings;
+        }
+
+        var optionNeedToDelete = optionSettings.Where(x => optionSettingIds.Contains(x.Id)).ToList();
+        
+        if (!optionNeedToDelete.Any())
+        {
+            return optionSettings;
+        }
+
+        foreach (var optionSetting in optionNeedToDelete)
+        {
+            session.Delete(optionSetting);
+            optionSettings.Remove(optionSetting);
+        }
+
+        await session.SaveChangesAsync();
+
+        if (!optionSettings.Any())
+        {
+            await DeleteMetafieldsShop();
+            return optionSettings;
+        }
+
+        await UpdateMetafieldsShop();
+
+        async Task DeleteMetafieldsShop()
+        {
+            await shopifyClient.RemoveMetaDataFieldAsync(new List<MetadataFieldDelete>
+            {
+                new MetadataFieldDelete(
+                    metafieldsConfiguration.Value.Namespace,
+                    "option_setting"
+                    )
+            }, 
+            store.Domain, 
+            store.Token, 
+            Convert.ToInt64(store.ShopId));
+        }
+
+        async Task UpdateMetafieldsShop()
+        {
+            var metafieldValue = JsonConvert.SerializeObject(
+                optionSettings,
+                new JsonSerializerSettings
+                {
+                    StringEscapeHandling = StringEscapeHandling.Default,
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Formatting = Formatting.None,
+                }
+            );
+
+            var optionSettingMetafield = new Dictionary<string, string>
+            {
+                { "key", "option_setting" },
+                { "namespace", metafieldsConfiguration.Value.Namespace },
+                { "value", metafieldValue },
+                { "type", "json" },
+                { "ownerId", $"gid://shopify/Shop/{store.ShopId}" },
+            };
+
+            var requestBody = new
+            {
+                query = Metafields.MetafieldsSetMutation,
+                variables = new { metafields = new List<dynamic> { optionSettingMetafield } },
+            };
+
+            try
+            {
+                await shopifyClient.RequestToShopify(store.Domain, store.Token, requestBody);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Could not save setting to shopify metafields for store {store}");
+            }
+        }
+
+        return optionSettings;
     }
 
     public async Task<AppStatusResponse> GetAppStatus(Guid storeId)

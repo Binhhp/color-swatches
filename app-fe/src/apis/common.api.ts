@@ -3,7 +3,8 @@ import type {
   AppStatusResponse,
   UpdateAppStatusRequest,
   OptionSetting,
-  UpsertOptionSettingRequest
+  UpsertOptionSettingRequest,
+  DeleteOptionSettingRequest
 } from "@/models/common/setting.model";
 import { ApiHandler } from "@/utils/api-handler";
 import { passParams } from "@/utils/pass-params";
@@ -45,6 +46,15 @@ export default class CommonApi {
   static async UpsertOptionSetting(request: UpsertOptionSettingRequest) {
     const response = await ApiHandler<OptionSetting[]>({
       method: "POST",
+      url: "/setting/options",
+      body: request
+    });
+    return response;
+  }
+
+  static async DeleteOptionSetting(request: DeleteOptionSettingRequest) {
+    const response = await ApiHandler<OptionSetting[]>({
+      method: "DELETE",
       url: "/setting/options",
       body: request
     });

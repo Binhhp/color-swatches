@@ -5,33 +5,29 @@ import {
   Text,
   SkeletonBodyText,
   useIndexResourceState,
-  LegacyCard
+  LegacyCard,
+  Toast
 } from "@shopify/polaris";
 import { useEffect, useState } from "react";
-import type { OptionSetting } from "@/models/common/setting.model";
+import type { OptionSetting, DeleteOptionSettingRequest } from "@/models/common/setting.model";
 import { useNavigate } from "@tanstack/react-router";
 import { UriProvider } from "@/utils/uri-provider";
 import settingStore from "@/stores/setting";
+import { positionMap } from "./detail/template";
+import { DeleteIcon } from "@shopify/polaris-icons";
 
-const positionMap: Record<string, string> = {
-  "home-page": "Home page",
-  "collection-page": "Collection page",
-  "product-page": "Product page",
-  "cart-page": "Cart page",
-  "checkout-page": "Checkout page",
-  "search-page": "Search page",
-  "blog-page": "Blog page",
-  "article-page": "Article page",
-  "page-page": "Page page",
-  "contact-page": "Contact page"
-};
-
-const OptionSettingsTable = () => {
-  const { optionSettings, getOptionSettings, isOptionSettingsLoading } = settingStore();
+const OptionSettingsTable = ({ isBackList = false }) => {
+  const { optionSettings, getOptionSettings, isOptionSettingsLoading, deleteOptionSetting } =
+    settingStore();
 
   const [data, setData] = useState<OptionSetting[]>([]);
+
   const [page, setPage] = useState(1);
+
   const pageSize = 10;
+
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     setData(optionSettings.slice((page - 1) * pageSize, page * pageSize));
@@ -52,6 +48,41 @@ const OptionSettingsTable = () => {
 
   const navigate = useNavigate();
 
+  const handleDelete = async () => {
+    if (selectedResources.length === 0) return;
+
+    setDeleteError(null);
+
+    try {
+      const request: DeleteOptionSettingRequest = {
+        optionSettingIds: selectedResources
+      };
+
+      const response = await deleteOptionSetting(request);
+
+      if (response.status) {
+        setDeleteError("Options deleted successfully");
+        setShowToast(true);
+      } else {
+        setDeleteError(response.message || "Failed to delete selected options");
+        setShowToast(true);
+      }
+    } catch (error) {
+      setDeleteError("An error occurred while deleting options");
+      setShowToast(true);
+      console.error("Error deleting options:", error);
+    }
+  };
+
+  const bulkActions = [
+    {
+      icon: DeleteIcon,
+      destructive: true,
+      content: "Delete",
+      onAction: handleDelete
+    }
+  ];
+
   return (
     <div className='mt-10 mb-10'>
       <div style={{ marginBottom: 4 }}>
@@ -64,6 +95,19 @@ const OptionSettingsTable = () => {
           Effortlessly manage and display product variants to drive more sales.
         </Text>
       </div>
+
+      {/* Toast notification */}
+      {showToast && deleteError && (
+        <Toast
+          content={deleteError}
+          error={!deleteError.includes("successfully")}
+          onDismiss={() => {
+            setShowToast(false);
+            setDeleteError(null);
+          }}
+        />
+      )}
+
       {isOptionSettingsLoading ? (
         <div>
           <SkeletonBodyText lines={10} />
@@ -72,6 +116,7 @@ const OptionSettingsTable = () => {
         <div className='option-setting-list'>
           <LegacyCard>
             <IndexTable
+              bulkActions={bulkActions}
               resourceName={resourceName}
               itemCount={data.length}
               selectedItemsCount={allResourcesSelected ? "All" : selectedResources.length}
@@ -123,17 +168,22 @@ const OptionSettingsTable = () => {
                   <IndexTable.Cell>
                     {option.position &&
                       option.position.length > 0 &&
-                      option.position.map((pos) => positionMap[pos] || pos).join(", ")}
+                      option.position
+                        .map((pos) => positionMap[pos] || pos)
+                        .sort()
+                        .join(", ")}
                   </IndexTable.Cell>
                   <IndexTable.Cell>
                     <Button
                       size='slim'
                       variant='primary'
-                      onClick={() =>
+                      onClick={() => {
                         navigate({
-                          to: UriProvider.KeepParameters(`/options/${option.productOptionId}`)
-                        })
-                      }
+                          to: UriProvider.KeepParameters(
+                            `/options/${option.productOptionId}?lst=${isBackList}`
+                          )
+                        });
+                      }}
                     >
                       Setting
                     </Button>

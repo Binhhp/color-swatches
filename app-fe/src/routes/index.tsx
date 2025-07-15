@@ -29,11 +29,6 @@ function Index() {
     setIsEnableApp(isEnabled ?? false);
   }, []);
 
-  const [showOptionSettings, setShowOptionSettings] = useState(true);
-  const handleShowOptionSettings = () => {
-    setShowOptionSettings(!showOptionSettings);
-  };
-
   return (
     <Page
       title='Welcome to SwatchPilot 🎉'
@@ -44,16 +39,19 @@ function Index() {
           <EnableApp onDismiss={handleDismiss} />
         </div>
       )}
-      {showOptionSettings && (
+
+      {shop?.isSettingOption && (
         <div className='mb-5'>
           <OptionSettingsTable />
         </div>
       )}
-      {!showOptionSettings && !shop?.isSettingOption && (
+
+      {!shop?.isSettingOption && (
         <div className='mb-5'>
-          <SetupGuide onShowOptionSettings={handleShowOptionSettings} />
+          <SetupGuide />
         </div>
       )}
+
       <div className='mb-5'>
         <VideoTutorials />
       </div>

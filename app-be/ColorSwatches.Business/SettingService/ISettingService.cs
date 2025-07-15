@@ -10,6 +10,7 @@ public interface ISettingService : IScopedService
 {
     Task<List<OptionSetting>> GetOptionSetting(Guid storeId);
     Task<List<OptionSetting>> UpsertOptionSetting(Guid storeId, UpsertOptionSettingRequest request);
+    Task<List<OptionSetting>> DeleteOptionSetting(Guid storeId, List<Guid> optionSettingIds);
     Task<AppStatusResponse> GetAppStatus(Guid storeId);
     Task<bool> UpdateAppStatus(Guid storeId, UpdateAppStatusRequest request);
     Task<bool> UpsertAppStatusMetafield(UpsertAppStatusModel model);

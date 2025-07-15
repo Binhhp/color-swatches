@@ -56,7 +56,13 @@ public static class Extensions
                         s => s.StoreId,
                         fkd => fkd.OnDelete = CascadeAction.Cascade
                     )
-                    .Identity(s => s.StoreId);
+                    .Index(s => new
+                    {
+                        s.Id,
+                        s.ProductOptionId,
+                        s.StoreId
+                    })
+                    .Identity(s => s.Id);
 
                 options.UseNewtonsoftForSerialization(
                     casing: Casing.SnakeCase,

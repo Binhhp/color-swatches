@@ -2,7 +2,10 @@ namespace ColorSwatches.Business.ShopifyClient.Mutations;
 
 public static class Metafields
 {
-  public const string MetafieldsSetMutation = """
+    public const string MetafieldsDeleteMutation =
+        @"mutation metafieldsDelete($metafields: [MetafieldIdentifierInput!]!) {metafieldsDelete(metafields: $metafields){ deletedMetafields { key namespace ownerId } userErrors{field message}}}";
+
+    public const string MetafieldsSetMutation = """
         mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
           metafieldsSet(metafields: $metafields) {
             metafields {

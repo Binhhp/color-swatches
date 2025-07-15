@@ -1,6 +1,5 @@
 using System.Text.Json;
 using ColorSwatches.Business.WebhookService;
-using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ColorSwatches.Controllers;
@@ -11,12 +10,10 @@ public class WebhookController(IUninstallStoreWebhookService uninstallStoreWebho
     : CoreControllerBase
 {
     [HttpPost("uninstall")]
-    public IActionResult UninstallStore(JsonElement request)
+    public async Task<IActionResult> UninstallStore(JsonElement request)
     {
         var shopifyId = request.GetProperty("id").GetInt64().ToString();
-        BackgroundJob.Enqueue(
-            () => uninstallStoreWebhookService.UninstallStore(shopifyId)
-        );
+        await uninstallStoreWebhookService.UninstallStore(shopifyId);
         return SuccessResponse(true);
     }
 }

@@ -119,4 +119,31 @@ public class ShopifyClient(
             return null;
         }
     }
+
+    public async Task RemoveMetaDataFieldAsync(IEnumerable<MetadataFieldDelete> fields, string domain, string token, long shopId)
+    {
+        try
+        {
+            var metaFields = fields.Select(x =>
+            {
+                return new
+                {
+                    key = x.Key,
+                    x.Namespace,
+                    ownerId = $"gid://shopify/Shop/{shopId}"
+                };
+            });
+
+            var requestBody = new
+            {
+                query = Metafields.MetafieldsDeleteMutation,
+                variables = new { metafields = metaFields }
+            };
+            await RequestToShopify(domain, token, requestBody);
+        }
+        catch (Exception ex)
+        {
+            logger.Error(ex, $"Error when remove metadata fields {domain}");
+        }
+    }
 }

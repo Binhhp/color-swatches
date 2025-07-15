@@ -49,3 +49,7 @@ export interface OptionSetting {
 export interface UpsertOptionSettingRequest {
   optionSettings: OptionSetting[];
 }
+
+export interface DeleteOptionSettingRequest {
+  optionSettingIds: string[];
+}

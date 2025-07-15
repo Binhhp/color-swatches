@@ -66,7 +66,7 @@ namespace Marten.Generated.DocumentStorage
             // .Net Class Type
             var parameter2 = parameterBuilder.AppendParameter(_document.GetType().FullName);
             parameter2.NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Varchar;
-            var parameter3 = parameterBuilder.AppendParameter(document.StoreId);
+            var parameter3 = parameterBuilder.AppendParameter(document.Id);
             setVersionParameter(parameterBuilder);
             builder.Append(')');
         }
@@ -129,7 +129,7 @@ namespace Marten.Generated.DocumentStorage
             // .Net Class Type
             var parameter2 = parameterBuilder.AppendParameter(_document.GetType().FullName);
             parameter2.NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Varchar;
-            var parameter3 = parameterBuilder.AppendParameter(document.StoreId);
+            var parameter3 = parameterBuilder.AppendParameter(document.Id);
             setVersionParameter(parameterBuilder);
             builder.Append(')');
         }
@@ -192,7 +192,7 @@ namespace Marten.Generated.DocumentStorage
             // .Net Class Type
             var parameter2 = parameterBuilder.AppendParameter(_document.GetType().FullName);
             parameter2.NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Varchar;
-            var parameter3 = parameterBuilder.AppendParameter(document.StoreId);
+            var parameter3 = parameterBuilder.AppendParameter(document.Id);
             setVersionParameter(parameterBuilder);
             builder.Append(')');
         }
@@ -382,8 +382,8 @@ namespace Marten.Generated.DocumentStorage
 
         public override System.Guid AssignIdentity(ColorSwatches.Entities.Entities.OptionSetting document, string tenantId, Marten.Storage.IMartenDatabase database)
         {
-            if (document.StoreId == Guid.Empty) _setter(document, Marten.Schema.Identity.CombGuidIdGeneration.NewGuid());
-            return document.StoreId;
+            if (document.Id == Guid.Empty) _setter(document, Marten.Schema.Identity.CombGuidIdGeneration.NewGuid());
+            return document.Id;
         }
 
 
@@ -434,7 +434,7 @@ namespace Marten.Generated.DocumentStorage
 
         public override System.Guid Identity(ColorSwatches.Entities.Entities.OptionSetting document)
         {
-            return document.StoreId;
+            return document.Id;
         }
 
 
@@ -474,8 +474,8 @@ namespace Marten.Generated.DocumentStorage
 
         public override System.Guid AssignIdentity(ColorSwatches.Entities.Entities.OptionSetting document, string tenantId, Marten.Storage.IMartenDatabase database)
         {
-            if (document.StoreId == Guid.Empty) _setter(document, Marten.Schema.Identity.CombGuidIdGeneration.NewGuid());
-            return document.StoreId;
+            if (document.Id == Guid.Empty) _setter(document, Marten.Schema.Identity.CombGuidIdGeneration.NewGuid());
+            return document.Id;
         }
 
 
@@ -526,7 +526,7 @@ namespace Marten.Generated.DocumentStorage
 
         public override System.Guid Identity(ColorSwatches.Entities.Entities.OptionSetting document)
         {
-            return document.StoreId;
+            return document.Id;
         }
 
 
@@ -566,8 +566,8 @@ namespace Marten.Generated.DocumentStorage
 
         public override System.Guid AssignIdentity(ColorSwatches.Entities.Entities.OptionSetting document, string tenantId, Marten.Storage.IMartenDatabase database)
         {
-            if (document.StoreId == Guid.Empty) _setter(document, Marten.Schema.Identity.CombGuidIdGeneration.NewGuid());
-            return document.StoreId;
+            if (document.Id == Guid.Empty) _setter(document, Marten.Schema.Identity.CombGuidIdGeneration.NewGuid());
+            return document.Id;
         }
 
 
@@ -618,7 +618,7 @@ namespace Marten.Generated.DocumentStorage
 
         public override System.Guid Identity(ColorSwatches.Entities.Entities.OptionSetting document)
         {
-            return document.StoreId;
+            return document.Id;
         }
 
 
@@ -658,8 +658,8 @@ namespace Marten.Generated.DocumentStorage
 
         public override System.Guid AssignIdentity(ColorSwatches.Entities.Entities.OptionSetting document, string tenantId, Marten.Storage.IMartenDatabase database)
         {
-            if (document.StoreId == Guid.Empty) _setter(document, Marten.Schema.Identity.CombGuidIdGeneration.NewGuid());
-            return document.StoreId;
+            if (document.Id == Guid.Empty) _setter(document, Marten.Schema.Identity.CombGuidIdGeneration.NewGuid());
+            return document.Id;
         }
 
 
@@ -710,7 +710,7 @@ namespace Marten.Generated.DocumentStorage
 
         public override System.Guid Identity(ColorSwatches.Entities.Entities.OptionSetting document)
         {
-            return document.StoreId;
+            return document.Id;
         }
 
 
@@ -780,7 +780,7 @@ namespace Marten.Generated.DocumentStorage
         {
             writer.Write(document.StoreId, NpgsqlTypes.NpgsqlDbType.Uuid);
             writer.Write(document.GetType().FullName, NpgsqlTypes.NpgsqlDbType.Varchar);
-            writer.Write(document.StoreId, NpgsqlTypes.NpgsqlDbType.Uuid);
+            writer.Write(document.Id, NpgsqlTypes.NpgsqlDbType.Uuid);
             writer.Write(Marten.Schema.Identity.CombGuidIdGeneration.NewGuid(), NpgsqlTypes.NpgsqlDbType.Uuid);
             writer.Write(serializer.ToJson(document), NpgsqlTypes.NpgsqlDbType.Jsonb);
         }
@@ -790,7 +790,7 @@ namespace Marten.Generated.DocumentStorage
         {
             await writer.WriteAsync(document.StoreId, NpgsqlTypes.NpgsqlDbType.Uuid, cancellation);
             await writer.WriteAsync(document.GetType().FullName, NpgsqlTypes.NpgsqlDbType.Varchar, cancellation);
-            await writer.WriteAsync(document.StoreId, NpgsqlTypes.NpgsqlDbType.Uuid, cancellation);
+            await writer.WriteAsync(document.Id, NpgsqlTypes.NpgsqlDbType.Uuid, cancellation);
             await writer.WriteAsync(Marten.Schema.Identity.CombGuidIdGeneration.NewGuid(), NpgsqlTypes.NpgsqlDbType.Uuid, cancellation);
             await writer.WriteAsync(serializer.ToJson(document), NpgsqlTypes.NpgsqlDbType.Jsonb, cancellation);
         }

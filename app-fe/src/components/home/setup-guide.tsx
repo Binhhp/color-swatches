@@ -14,12 +14,16 @@ import {
 import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
 import { appBlock } from "@/utils/config";
 import rootStore from "@/stores/root";
+import { useNavigate } from "@tanstack/react-router";
+import { UriProvider } from "@/utils/uri-provider";
 
-const SetupGuide: React.FC<{ onShowOptionSettings: () => void }> = ({ onShowOptionSettings }) => {
+const SetupGuide: React.FC = () => {
   const { shop } = rootStore();
 
+  const navigate = useNavigate();
+
   const [firstTime, setFirstTime] = React.useState(true);
-  const [completedSteps, setCompletedSteps] = React.useState(0);
+  const [completedSteps, setCompletedSteps] = React.useState(window.step || 0);
   const [open, setOpen] = React.useState(true);
 
   const handleEnableApp = () => {
@@ -27,17 +31,20 @@ const SetupGuide: React.FC<{ onShowOptionSettings: () => void }> = ({ onShowOpti
     window.open(appBlock.autoEnableAppEmbed.format(shop?.domain, appBlock.appBlockId), "_blank");
     setCompletedSteps(1);
     setFirstTime(false);
+    window.step = 1;
   };
 
   const handleConfigureOptions = () => {
     if (!shop?.domain) return;
+    navigate({ to: UriProvider.KeepParameters("/list-options") });
     setCompletedSteps(2);
-    onShowOptionSettings();
+    window.step = 2;
   };
 
   const handleCustomizeSwatches = () => {
     if (!shop?.domain) return;
     setCompletedSteps(3);
+    window.step = 3;
   };
 
   const steps = [

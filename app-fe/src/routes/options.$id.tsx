@@ -6,7 +6,7 @@ import settingStore from "@/stores/setting";
 import { UriProvider } from "@/utils/uri-provider";
 import { Toast } from "@shopify/polaris";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute(`/options/$id`)({
   component: Index
@@ -69,7 +69,11 @@ function Index() {
     if (resp.status) {
       setMessageToShow(resp);
       toggleActive();
-      navigate({ to: UriProvider.KeepParameters("/") });
+      if (window.location.search.includes("lst=true")) {
+        navigate({ to: UriProvider.KeepParameters("/list-options") });
+      } else {
+        navigate({ to: UriProvider.KeepParameters("/") });
+      }
       return;
     }
 

@@ -3,6 +3,7 @@ import CommonApi from "@/apis/common.api";
 import type {
   UpdateAppStatusRequest,
   OptionSetting,
+  DeleteOptionSettingRequest
 } from "@/models/common/setting.model";
 import { ResponseModel } from "@/models/api/response.model";
 
@@ -29,6 +30,9 @@ type SettingAction = {
   getOptionById: (id: string) => OptionSetting | undefined;
 
   upsertOptionSetting: (request: OptionSetting) => Promise<ResponseModel<OptionSetting[]>>;
+  deleteOptionSetting: (
+    request: DeleteOptionSettingRequest
+  ) => Promise<ResponseModel<OptionSetting[]>>;
 
   // Utility Actions
   setAppStatus: (status: boolean) => void;
@@ -140,6 +144,21 @@ const settingStore = create<SettingState & SettingAction>((set, get) => ({
         isLoading: false
       });
       return new ResponseModel<OptionSetting[]>(false, 500).AddMessage("Failed to save option!");
+    }
+  },
+
+  deleteOptionSetting: async (request: DeleteOptionSettingRequest) => {
+    try {
+      const response = await CommonApi.DeleteOptionSetting(request);
+      if (response) {
+        set({
+          optionSettings: response.result
+        });
+      }
+      await get().getOptionSettings();
+      return response;
+    } catch {
+      return new ResponseModel<OptionSetting[]>(false, 500).AddMessage("Failed to delete option!");
     }
   },
 
