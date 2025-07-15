@@ -1,54 +1,39 @@
-import type { HSBColor, RGBColor } from "@shopify/polaris";
+import type { HSBColor } from "@shopify/polaris";
 
 export class ColorProvider {
-  static rgbToHex({ red, green, blue }: RGBColor): string {
-    return "#" + [red, green, blue].map((x) => x.toString(16).padStart(2, "0")).join("");
-  }
+  static hsbToHex({ hue, saturation, brightness }: HSBColor): string {
+    // Normalize values
+    const h = (hue * 100) / 360; // Convert to 0-1 range
+    const s = (saturation * 100) / 100; // Convert to 0-1 range  
+    const v = (brightness * 100) / 100; // Convert to 0-1 range
 
-  static hsbToRgb({ hue, saturation, brightness }: HSBColor): RGBColor {
-    const sat = (saturation * 100) / 100;
-    const bright = (brightness * 100) / 100;
-    const chroma = bright * sat;
-    const hueSegment = (hue * 100) / 60;
-    const x = chroma * (1 - Math.abs((hueSegment % 2) - 1));
+    let r = 0, g = 0, b = 0;
 
-    let r = 0,
-      g = 0,
-      b = 0;
+    if (s === 0) {
+      // Achromatic (gray)
+      r = g = b = v;
+    } else {
+      const i = Math.floor(h * 6);
+      const f = h * 6 - i;
+      const p = v * (1 - s);
+      const q = v * (1 - f * s);
+      const t = v * (1 - (1 - f) * s);
 
-    if (hueSegment >= 0 && hueSegment < 1) {
-      r = chroma;
-      g = x;
-      b = 0;
-    } else if (hueSegment >= 1 && hueSegment < 2) {
-      r = x;
-      g = chroma;
-      b = 0;
-    } else if (hueSegment >= 2 && hueSegment < 3) {
-      r = 0;
-      g = chroma;
-      b = x;
-    } else if (hueSegment >= 3 && hueSegment < 4) {
-      r = 0;
-      g = x;
-      b = chroma;
-    } else if (hueSegment >= 4 && hueSegment < 5) {
-      r = x;
-      g = 0;
-      b = chroma;
-    } else if (hueSegment >= 5 && hueSegment <= 6) {
-      r = chroma;
-      g = 0;
-      b = x;
+      switch (i % 6) {
+        case 0: r = v; g = t; b = p; break;
+        case 1: r = q; g = v; b = p; break;
+        case 2: r = p; g = v; b = t; break;
+        case 3: r = p; g = q; b = v; break;
+        case 4: r = t; g = p; b = v; break;
+        case 5: r = v; g = p; b = q; break;
+      }
     }
 
-    const m = bright - chroma;
+    const red = Math.round(r * 255);
+    const green = Math.round(g * 255);
+    const blue = Math.round(b * 255);
 
-    return {
-      red: Math.round((r + m) * 255),
-      green: Math.round((g + m) * 255),
-      blue: Math.round((b + m) * 255)
-    };
+    return "#" + [red, green, blue].map((x) => x.toString(16).padStart(2, "0")).join("");
   }
 
   static hexToHsba(hex: string): HSBColor {
@@ -93,7 +78,9 @@ export class ColorProvider {
     return {
       hue: h,
       saturation: s,
-      brightness: v
+      brightness: v,
+      alpha: 1
     } as HSBColor;
   }
 }
+

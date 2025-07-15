@@ -3,8 +3,8 @@ import CommonApi from "@/apis/common.api";
 import type {
   UpdateAppStatusRequest,
   OptionSetting,
-  UpsertOptionSettingRequest
 } from "@/models/common/setting.model";
+import { ResponseModel } from "@/models/api/response.model";
 
 type SettingState = {
   // App Status
@@ -28,9 +28,7 @@ type SettingAction = {
   getOptionSettings: () => Promise<OptionSetting[] | undefined>;
   getOptionById: (id: string) => OptionSetting | undefined;
 
-  upsertOptionSettings: (
-    request: UpsertOptionSettingRequest
-  ) => Promise<OptionSetting[] | undefined>;
+  upsertOptionSetting: (request: OptionSetting) => Promise<ResponseModel<OptionSetting[]>>;
 
   // Utility Actions
   setAppStatus: (status: boolean) => void;
@@ -120,13 +118,16 @@ const settingStore = create<SettingState & SettingAction>((set, get) => ({
     return option;
   },
 
-  upsertOptionSettings: async (request: UpsertOptionSettingRequest) => {
+  upsertOptionSetting: async (request: OptionSetting) => {
     set({ isOptionSettingsLoading: true, isLoading: true });
     try {
-      const response = await CommonApi.UpsertOptionSetting(request);
+      const newOptionSettings = [request];
+      const response = await CommonApi.UpsertOptionSetting({
+        optionSettings: newOptionSettings
+      });
       if (response) {
         set({
-          optionSettings: response,
+          optionSettings: response.result,
           isOptionSettingsLoading: false,
           isLoading: false
         });
@@ -138,7 +139,7 @@ const settingStore = create<SettingState & SettingAction>((set, get) => ({
         isOptionSettingsLoading: false,
         isLoading: false
       });
-      return undefined;
+      return new ResponseModel<OptionSetting[]>(false, 500).AddMessage("Failed to save option!");
     }
   },
 

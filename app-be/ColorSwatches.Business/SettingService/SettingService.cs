@@ -9,6 +9,7 @@ using ColorSwatches.Shared.Configurations;
 using Marten;
 using Marten.Patching;
 using Microsoft.Extensions.Options;
+using NetTopologySuite.Index.HPRtree;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -46,7 +47,7 @@ public class SettingService(
         else
         {
             var productOptions = await shopifyClient.GetAllProductOptionsTyped(store.Domain, store.Token);
-            if(productOptions != null && productOptions.Data?.Products?.Edges?.Any() == true)
+            if (productOptions != null && productOptions.Data?.Products?.Edges?.Any() == true)
             {
                 productOptionList = productOptions.Data?.Products?.Edges?.Select(e => e.Node).Where(x => x != null).ToList();
 
@@ -66,7 +67,7 @@ public class SettingService(
                 if (product == null || product.Options == null || !product.Options.Any()) continue;
                 foreach (var option in product.Options)
                 {
-                    if (settings.Any(s => s.ProductOptionId == option.Id))
+                    if (settings.Any(s => option.Id.Contains(s.ProductOptionId)))
                     {
                         continue;
                     }
@@ -75,7 +76,7 @@ public class SettingService(
                 }
             }
         }
-                    
+
         return settings.ToList();
     }
 
@@ -104,10 +105,10 @@ public class SettingService(
             Position = new string[] { },
             Appearance = new OptionSettingAppearance
             {
-                Height = "30px",
-                Width = "30px",
-                Spacing = "5px",
-                BorderRadius = "5px",
+                Height = "50",
+                Width = "50",
+                Spacing = "5",
+                BorderRadius = "5",
                 DefaultColor = "#000000",
                 SelectedColor = "#000000",
                 HoverColor = "#000000",
@@ -124,23 +125,28 @@ public class SettingService(
 
         store.ThenThrowIfNull(Exceptions.NotFound(storeId.ToString()));
 
-        var optionSettings = await session.Query<OptionSetting>().Where(s => s.StoreId == storeId).ToListAsync();
-        
+        var optionSettingQuery = session.Query<OptionSetting>().Where(s => s.StoreId == storeId).ToList();
+
+        var optionSettings = optionSettingQuery.Any() ? optionSettingQuery.ToList() : new List<OptionSetting>();
+
         foreach (var item in request.OptionSettings)
         {
-            if (optionSettings.Any(s => s.Id == item.Id))
+            var existingItem = optionSettings.FirstOrDefault(s => s.ProductOptionId == item.ProductOptionId);
+            if (existingItem != null)
             {
-                item.DateCreated = DateTime.UtcNow;
+                item.DateCreated = existingItem.DateCreated;
                 item.DateModified = DateTime.UtcNow;
-                session.Store(item);
+                item.Id = existingItem.Id;
+                existingItem = item;
                 continue;
             }
 
             item.DateCreated = DateTime.UtcNow;
             item.DateModified = DateTime.UtcNow;
-            session.Insert(item);
+            optionSettings.Add(item);
         }
 
+        session.Store(optionSettings.ToArray());
         await session.SaveChangesAsync();
 
         var jsonOptions = new JsonSerializerSettings

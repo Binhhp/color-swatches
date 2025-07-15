@@ -12,14 +12,6 @@ include_config_on_deploy = true
 [webhooks]
 api_version = "2025-07"
 
-  [[webhooks.subscriptions]]
-  topics = [ "app/uninstalled" ]
-  uri = "/webhooks/app/uninstalled"
-
-  [[webhooks.subscriptions]]
-  topics = [ "app/scopes_update" ]
-  uri = "/webhooks/app/scopes_update"
-
 [auth]
 redirect_urls = [
   "https://localhost:44335/api/home/auth",

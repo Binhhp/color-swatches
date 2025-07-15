@@ -48,7 +48,7 @@ export default class CommonApi {
       url: "/setting/options",
       body: request
     });
-    return response.result;
+    return response;
   }
 
   static async CheckThemeEnabled() {

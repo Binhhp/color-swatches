@@ -5,6 +5,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { checkShopParam } from "@/middleware/shopCheck";
 import rootStore from "@/stores/root";
 import type { QueryClient } from "@tanstack/react-query";
+import { Frame } from "@shopify/polaris";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -35,10 +36,10 @@ export const Route = createRootRouteWithContext<{
     }
   },
   component: () => (
-    <>
+    <Frame>
       <Outlet />
       <TanStackRouterDevtools position='bottom-right' />
       <ReactQueryDevtools buttonPosition='bottom-left' />
-    </>
+    </Frame>
   )
 });

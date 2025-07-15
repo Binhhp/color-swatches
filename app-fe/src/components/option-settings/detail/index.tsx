@@ -15,45 +15,14 @@ import { UriProvider } from "@/utils/uri-provider";
 import { useNavigate } from "@tanstack/react-router";
 import { OptionValue } from "./option-value";
 import CustomizeModal from "./customize-modal";
-
-const positionMap: Record<string, string> = {
-  "home-page": "Home page",
-  "collection-page": "Collection page",
-  "product-page": "Product page"
-};
+import { positionMap, templateOptions } from "./template";
 
 export const OptionSettingsDetail: FC<{
   option: OptionSetting | undefined;
   setOption: (option: Partial<OptionSetting>) => void;
-}> = ({ option, setOption }) => {
-  // For select
-  const templateOptions = [
-    {
-      label: "Swatch",
-      value: "Swatch",
-      options: [
-        { label: "Color", value: "Color" },
-        { label: "Image", value: "Image" }
-      ]
-    },
-    {
-      label: "Button",
-      value: "Button",
-      options: [
-        { label: "Text", value: "Text" },
-        { label: "Image and text", value: "ImageText" }
-      ]
-    },
-    {
-      label: "Dropdown",
-      value: "Dropdown",
-      options: [
-        { label: "Color and text", value: "ColorText" },
-        { label: "Image and text", value: "ImageText" }
-      ]
-    }
-  ];
-
+  onSave: () => Promise<void>;
+  isSaving: boolean;
+}> = ({ option, setOption, onSave, isSaving }) => {
   // For position
   const allPositions = ["product-page", "collection-page", "home-page"];
   const handleAction = () => {
@@ -67,11 +36,10 @@ export const OptionSettingsDetail: FC<{
     navigate({ to: UriProvider.KeepParameters("/") });
   };
 
-  const styleOptions =
-    templateOptions.find((t) => t.value === (option?.template ?? "Swatch"))?.options ?? [];
+  const styleOptions = templateOptions.find((t) => t.value === option?.template)?.options ?? [];
 
   const handleTemplateChange = (value: string) => {
-    setOption({ ...option, template: value as string, style: styleOptions[0]?.value ?? "Color" });
+    setOption({ ...option, template: value as string, style: styleOptions[0]?.value });
   };
 
   const handleStyleChange = (value: string) => {
@@ -90,7 +58,12 @@ export const OptionSettingsDetail: FC<{
 
   return (
     <Page
-      primaryAction={<Button variant='primary'>Save</Button>}
+      primaryAction={{
+        content: "Save",
+        loading: isSaving,
+        disabled: isSaving,
+        onAction: onSave
+      }}
       backAction={{
         content: option?.name || "Option",
         onAction: handleBack
@@ -152,13 +125,13 @@ export const OptionSettingsDetail: FC<{
                     label: x.label,
                     value: x.value
                   }))}
-                  value={option.template ?? "Swatch"}
+                  value={option.template}
                   onChange={handleTemplateChange}
                 />
                 <Select
                   label='Style'
                   options={styleOptions}
-                  value={option.style ?? "Color"}
+                  value={option.style}
                   onChange={handleStyleChange}
                 />
                 <Button size='medium' onClick={() => setOpenCustomize(true)}>

@@ -1,7 +1,7 @@
 import { useState, type FC } from "react";
-import { Modal, Text, Select, Button, Card, ColorPicker, type HSBColor } from "@shopify/polaris";
+import { Modal, Text, Select, Button, Card, TextField, Tooltip } from "@shopify/polaris";
 import type { OptionSetting } from "@/models/common/setting.model";
-import { ColorProvider } from "@/utils/color-provider";
+import { HexColorPicker } from "react-colorful";
 
 interface CustomizeModalProps {
   open: boolean;
@@ -21,46 +21,52 @@ const COLOR_LABELS: Record<ColorType, string> = {
 
 const getInitialColor = (type: ColorType, option?: OptionSetting) => {
   if (type === "strikeColor") {
-    return ColorProvider.hexToHsba(option?.animation?.strikeColor ?? "#D9D9D9");
+    return option?.animation?.strikeColor ?? "#D9D9D9";
   }
-  return ColorProvider.hexToHsba(option?.appearance?.[type] ?? "#D9D9D9");
+  return option?.appearance?.[type] ?? "#D9D9D9";
 };
 
 const ColorSwatch: FC<{
-  color: HSBColor;
+  color: string;
   onClick: () => void;
 }> = ({ color, onClick }) => (
   <div
     onClick={onClick}
     className='w-6 h-6 rounded-full relative border border-gray-300 cursor-pointer'
-    style={{ background: ColorProvider.rgbToHex(ColorProvider.hsbToRgb(color)) }}
+    style={{ background: color }}
   ></div>
 );
 
 const ColorPickerPopover: FC<{
-  color: HSBColor;
-  onChange: (color: HSBColor) => void;
+  color: string;
+  onChange: (color: string) => void;
   open: boolean;
   onClose: () => void;
-  left?: number;
-  top?: number;
+  left?: number | string;
+  top?: number | string;
 }> = ({ color, onChange, open, onClose, left = 0, top = 0 }) => (
   <div
     onMouseLeave={onClose}
     className='absolute z-50 pb-2 pt-2 pl-2 pr-2 bg-white rounded-md border border-gray-200'
     style={{ display: open ? "block" : "none", left, top }}
   >
-    <ColorPicker color={color} onChange={onChange} />
+    <HexColorPicker
+      style={{
+        height: "150px"
+      }}
+      color={color}
+      onChange={onChange}
+    />
   </div>
 );
 
 export const CustomizeModal: FC<CustomizeModalProps> = ({ open, onClose, option, setOption }) => {
   // Appearance state
   const [appearance, setAppearance] = useState({
-    height: option?.appearance?.height ?? "100%",
-    width: option?.appearance?.width ?? "100%",
-    borderRadius: option?.appearance?.borderRadius ?? "0",
-    spacing: option?.appearance?.spacing ?? "0",
+    height: option?.appearance?.height ?? "50",
+    width: option?.appearance?.width ?? "50",
+    borderRadius: option?.appearance?.borderRadius ?? "8",
+    spacing: option?.appearance?.spacing ?? "10",
     defaultColor: getInitialColor("defaultColor", option),
     selectedColor: getInitialColor("selectedColor", option),
     hoverColor: getInitialColor("hoverColor", option)
@@ -73,9 +79,10 @@ export const CustomizeModal: FC<CustomizeModalProps> = ({ open, onClose, option,
   });
   // Only one color picker open at a time
   const [openColorPicker, setOpenColorPicker] = useState<ColorType | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   // Generalized color change handler
-  const handleColorChange = (type: ColorType, color: HSBColor) => {
+  const handleColorChange = (type: ColorType, color: string) => {
     if (type === "strikeColor") {
       setAnimation((prev) => ({ ...prev, strikeColor: color }));
     } else {
@@ -83,128 +90,178 @@ export const CustomizeModal: FC<CustomizeModalProps> = ({ open, onClose, option,
     }
   };
 
+  const colorTypes: ColorType[] = ["defaultColor", "selectedColor", "hoverColor"];
   // UI: Appearance section
   const renderAppearance = () => (
-    <Card>
-      <Text variant='headingMd' as='h3'>
-        Appearance
-      </Text>
-      <div className='grid grid-cols-2 gap-3 mt-3'>
-        <Select
-          label='Height'
-          options={[{ label: "Value", value: "value" }]}
-          value='value'
-          onChange={() => {}}
+    <div className='relative'>
+      {openColorPicker && (
+        <ColorPickerPopover
+          color={appearance[openColorPicker as "defaultColor" | "selectedColor" | "hoverColor"]}
+          onChange={(color) => handleColorChange(openColorPicker as ColorType, color)}
+          open={openColorPicker !== null}
+          onClose={() => setOpenColorPicker(null)}
+          left={colorTypes.indexOf(openColorPicker as ColorType) * 150 + 10}
+          top={10}
         />
-        <Select
-          label='Width'
-          options={[{ label: "Value", value: "value" }]}
-          value='value'
-          onChange={() => {}}
-        />
-        <Select
-          label='Border radius'
-          options={[{ label: "Value", value: "value" }]}
-          value='value'
-          onChange={() => {}}
-        />
-        <Select
-          label='Spacing'
-          options={[{ label: "Value", value: "value" }]}
-          value='value'
-          onChange={() => {}}
-        />
-      </div>
-      <div className='flex gap-4 mt-4'>
-        {(["defaultColor", "selectedColor", "hoverColor"] as ColorType[]).map((type, idx) => (
-          <div key={type} className='flex gap-2.5 items-center relative' style={{ flex: 1 }}>
-            <ColorSwatch
-              color={appearance[type as "defaultColor" | "selectedColor" | "hoverColor"]}
-              onClick={() => setOpenColorPicker(type)}
-            />
-            <Text variant='bodyMd' as='span'>
-              {COLOR_LABELS[type]}
-            </Text>
-            <ColorPickerPopover
-              color={appearance[type as "defaultColor" | "selectedColor" | "hoverColor"]}
-              onChange={(color) => handleColorChange(type, color)}
-              open={openColorPicker === type}
-              onClose={() => setOpenColorPicker(null)}
-              left={15 + idx * 150}
-              top={0}
-            />
-          </div>
-        ))}
-      </div>
-    </Card>
+      )}
+      <Card>
+        <Text variant='headingMd' as='h3'>
+          Appearance
+        </Text>
+        <div className='grid grid-cols-2 gap-3 mt-3'>
+          <TextField
+            label='Height'
+            autoComplete='off'
+            type='number'
+            value={appearance.height}
+            onChange={(value) => setAppearance((prev) => ({ ...prev, height: value }))}
+          />
+          <TextField
+            label='Width'
+            autoComplete='off'
+            type='number'
+            value={appearance.width}
+            onChange={(value) => setAppearance((prev) => ({ ...prev, width: value }))}
+          />
+          <TextField
+            label='Border radius'
+            autoComplete='off'
+            type='number'
+            value={appearance.borderRadius}
+            onChange={(value) => setAppearance((prev) => ({ ...prev, borderRadius: value }))}
+          />
+          <TextField
+            label='Spacing'
+            autoComplete='off'
+            type='number'
+            value={appearance.spacing}
+            onChange={(value) => setAppearance((prev) => ({ ...prev, spacing: value }))}
+          />
+        </div>
+        <div className='flex gap-4 mt-4'>
+          {colorTypes.map((type, idx) => (
+            <div
+              key={type + idx}
+              className='flex gap-2.5 items-center relative'
+              style={{ flex: 1 }}
+            >
+              <ColorSwatch
+                color={appearance[type as "defaultColor" | "selectedColor" | "hoverColor"]}
+                onClick={() => {
+                  if (type === openColorPicker) {
+                    setOpenColorPicker(null);
+                    return;
+                  }
+                  setOpenColorPicker(type);
+                }}
+              />
+              <Text variant='bodyMd' as='span'>
+                {COLOR_LABELS[type]}
+              </Text>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </div>
   );
 
+  const [openColorPickerStrick, setOpenColorPickerStrick] = useState<boolean>(false);
   // UI: Animation section
   const renderAnimation = () => (
-    <Card>
-      <Text variant='headingMd' as='h3'>
-        Animation
-      </Text>
-      <div className='grid grid-cols-2 gap-3 mt-3'>
-        <Select
-          label='Hover animation'
-          options={[
-            { label: "Label", value: "label" },
-            { label: "Image", value: "image" }
-          ]}
-          value={animation.hoverAnimation}
-          onChange={(value) => setAnimation((prev) => ({ ...prev, hoverAnimation: value }))}
-        />
-        <Select
-          label='Out of stock'
-          options={[
-            { label: "Strike-out", value: "strike-out" },
-            { label: "None", value: "none" }
-          ]}
-          value={animation.outOfStock}
-          onChange={(value) => setAnimation((prev) => ({ ...prev, outOfStock: value }))}
-        />
-      </div>
-      <div className='flex gap-2.5 mt-4 items-center relative'>
-        <ColorSwatch
-          color={animation.strikeColor}
-          onClick={() => setOpenColorPicker("strikeColor")}
-        />
-        <Text variant='bodyMd' as='span'>
-          {COLOR_LABELS.strikeColor}
+    <div className='relative'>
+      <ColorPickerPopover
+        color={animation.strikeColor}
+        onChange={(color) => handleColorChange("strikeColor", color)}
+        open={openColorPickerStrick}
+        onClose={() => setOpenColorPickerStrick(false)}
+        left={10}
+        top={-60}
+      />
+      <Card>
+        <Text variant='headingMd' as='h3'>
+          Animation
         </Text>
-        <ColorPickerPopover
-          color={animation.strikeColor}
-          onChange={(color) => handleColorChange("strikeColor", color)}
-          open={openColorPicker === "strikeColor"}
-          onClose={() => setOpenColorPicker(null)}
-          left={10}
-          top={-70}
-        />
-      </div>
-    </Card>
+        <div className='grid grid-cols-2 gap-3 mt-3'>
+          <Select
+            label='Hover animation'
+            options={[
+              { label: "Label", value: "label" },
+              { label: "Image", value: "image" }
+            ]}
+            value={animation.hoverAnimation}
+            onChange={(value) => setAnimation((prev) => ({ ...prev, hoverAnimation: value }))}
+          />
+          <Select
+            label='Out of stock'
+            options={[
+              { label: "Strike-out", value: "strike-out" },
+              { label: "Basic Ribbon", value: "ribbon" }
+            ]}
+            value={animation.outOfStock}
+            onChange={(value) => setAnimation((prev) => ({ ...prev, outOfStock: value }))}
+          />
+        </div>
+        <div className='flex gap-2.5 mt-4 items-center relative'>
+          <ColorSwatch
+            color={animation.strikeColor ?? { hue: 0, saturation: 0, brightness: 0 }}
+            onClick={() => setOpenColorPickerStrick(!openColorPickerStrick)}
+          />
+          <Text variant='bodyMd' as='span'>
+            {COLOR_LABELS.strikeColor}
+          </Text>
+        </div>
+      </Card>
+    </div>
   );
 
   // UI: Preview section
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const renderBackground = (bg: string, i: number) => {
+    if (selectedIndex === i) {
+      return appearance.selectedColor;
+    }
+    if (hoveredIndex === i) {
+      return appearance.hoverColor;
+    }
+
+    return bg;
+  };
+
+  const renderTooltipContent = () => {
+    if (animation.hoverAnimation === "label" || !option?.values[0]?.image) {
+      return option?.values[0]?.value;
+    }
+    return <img src={option?.values[0]?.image} />;
+  };
+
   const renderPreview = () => (
     <Card>
       <Text variant='bodyMd' as='span'>
         Pattern design artistico Carnevale
       </Text>
-      <div className='grid grid-cols-8 gap-2 mt-4 mb-4'>
-        {["#eee", "#222", "#000", "#a33", "#933", "#b55", "#d22", "#b99"].map((c, i) => (
-          <div
-            key={i}
-            style={{
-              boxSizing: "border-box",
-              cursor: "pointer",
-              background: c,
-              paddingTop: "100%",
-              width: "100%",
-              borderRadius: "8px",
-              border: `1px solid ${i === 0 ? "#736F6F" : c}`
-            }}
-          ></div>
+      <div
+        className='grid grid-cols-8 mt-4 mb-4'
+        style={{
+          gap: `${appearance.spacing}px`
+        }}
+      >
+        {Array.from({ length: 8 }).map((_, i) => (
+          <Tooltip key={`tooltip-${i}`} content={renderTooltipContent()}>
+            <div
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              onClick={() => setSelectedIndex(i)}
+              style={{
+                boxSizing: "border-box",
+                cursor: "pointer",
+                background: renderBackground(appearance.defaultColor, i),
+                width: `${appearance.width}px`,
+                height: `${appearance.height}px`,
+                borderRadius: `${appearance.borderRadius}px`,
+                border: `1px solid #736F6F`
+              }}
+            ></div>
+          </Tooltip>
         ))}
       </div>
       <Button fullWidth variant='primary'>
@@ -219,16 +276,16 @@ export const CustomizeModal: FC<CustomizeModalProps> = ({ open, onClose, option,
       animation: {
         hoverAnimation: animation.hoverAnimation,
         outOfStock: animation.outOfStock,
-        strikeColor: ColorProvider.rgbToHex(ColorProvider.hsbToRgb(animation.strikeColor))
+        strikeColor: animation.strikeColor
       },
       appearance: {
         height: appearance.height,
         width: appearance.width,
         borderRadius: appearance.borderRadius,
         spacing: appearance.spacing,
-        defaultColor: ColorProvider.rgbToHex(ColorProvider.hsbToRgb(appearance.defaultColor)),
-        selectedColor: ColorProvider.rgbToHex(ColorProvider.hsbToRgb(appearance.selectedColor)),
-        hoverColor: ColorProvider.rgbToHex(ColorProvider.hsbToRgb(appearance.hoverColor))
+        defaultColor: appearance.defaultColor,
+        selectedColor: appearance.selectedColor,
+        hoverColor: appearance.hoverColor
       }
     });
     onClose();

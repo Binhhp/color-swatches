@@ -1,10 +1,10 @@
 import { useState, type FC } from "react";
-import { IndexTable, Text, Button, LegacyCard, ColorPicker, Icon } from "@shopify/polaris";
+import { IndexTable, Text, Button, LegacyCard, Icon } from "@shopify/polaris";
 import type { OptionSetting, OptionValue as OptionValueModel } from "@/models/common/setting.model";
 import type { IndexTableHeading } from "@shopify/polaris/build/ts/src/components/IndexTable";
 import type { NonEmptyArray } from "@shopify/polaris/build/ts/src/types";
 import { PlusIcon, UploadIcon, XIcon } from "@shopify/polaris-icons";
-import { ColorProvider } from "@/utils/color-provider";
+import { HexColorPicker } from "react-colorful";
 
 export const OptionValue: FC<{
   option: OptionSetting;
@@ -131,21 +131,10 @@ export const OptionValue: FC<{
     );
   };
 
-  const [color, setColor] = useState<{
-    hue: number;
-    saturation: number;
-    brightness: number;
-    alpha: number;
-  }>({
-    hue: 0,
-    saturation: 0,
-    brightness: 100,
-    alpha: 1
-  });
+  const [color, setColor] = useState<string>("");
 
   const handleSaveColor = () => {
-    const rgbColor = ColorProvider.hsbToRgb(color);
-    const hexColor = ColorProvider.rgbToHex(rgbColor);
+    const hexColor = color;
 
     if (option.values && option.values[indexColor]) {
       const currentColors = option.values[indexColor].color
@@ -189,7 +178,7 @@ export const OptionValue: FC<{
           background: "var(--p-color-bg-fill)"
         }}
       >
-        <ColorPicker
+        <HexColorPicker
           color={color}
           onChange={(colorInput) => {
             setColor(colorInput);
