@@ -1,0 +1,16 @@
+<script async>
+    window.orichi_colorswatches = {
+        option_settings: null
+    }
+    {% if shop.metafields.orichi_colorswatches.option_setting %}
+        window.orichi_colorswatches.option_setting = {{ shop.metafields.orichi_colorswatches.option_setting | json }}
+    {% endif %}
+    
+</script>
+
+{% schema %}
+{
+"name": "Color Swatches",
+"target": "section"
+}
+{% endschema %}

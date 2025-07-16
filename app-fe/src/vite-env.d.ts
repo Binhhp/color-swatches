@@ -5,4 +5,7 @@ declare interface String {
 
 declare interface Window {
   step: number;
+  orichi_colorswatches: {
+    option_settings: any[];
+  };
 }

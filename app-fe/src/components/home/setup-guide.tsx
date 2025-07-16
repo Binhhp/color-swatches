@@ -41,12 +41,6 @@ const SetupGuide: React.FC = () => {
     window.step = 2;
   };
 
-  const handleCustomizeSwatches = () => {
-    if (!shop?.domain) return;
-    setCompletedSteps(3);
-    window.step = 3;
-  };
-
   const steps = [
     {
       title: "Active app embed in the theme",
@@ -64,16 +58,6 @@ const SetupGuide: React.FC = () => {
       action: (
         <Button size='slim' variant='primary' onClick={handleConfigureOptions}>
           Configure options
-        </Button>
-      ),
-      active: false
-    },
-    {
-      title: "Customize swatches",
-      description: "",
-      action: (
-        <Button size='slim' variant='primary' onClick={handleCustomizeSwatches}>
-          Customize
         </Button>
       ),
       active: false

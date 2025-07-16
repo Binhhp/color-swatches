@@ -1,12 +1,11 @@
 import { OptionSettingsDetail } from "@/components/option-settings/detail";
 import { templateOptions } from "@/components/option-settings/detail/template";
 import type { OptionSetting } from "@/models/common/setting.model";
-import { ResponseModel } from "@/models/api/response.model";
 import settingStore from "@/stores/setting";
 import { UriProvider } from "@/utils/uri-provider";
-import { Toast } from "@shopify/polaris";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useAppBridge } from "@shopify/app-bridge-react";
 
 export const Route = createFileRoute(`/options/$id`)({
   component: Index
@@ -52,14 +51,7 @@ function Index() {
 
   const navigate = useNavigate();
 
-  const [active, setActive] = useState(false);
-
-  const [messageToShow, setMessageToShow] = useState<ResponseModel<OptionSetting[]> | undefined>();
-
-  const toggleActive = () => {
-    setActive((active) => !active);
-    setMessageToShow(undefined);
-  };
+  const shopify = useAppBridge();
 
   const handleSave = async () => {
     if (!optionState) return;
@@ -67,38 +59,22 @@ function Index() {
     const resp = await upsertOptionSetting(optionState);
 
     if (resp.status) {
-      setMessageToShow(resp);
-      toggleActive();
-      if (window.location.search.includes("lst=true")) {
-        navigate({ to: UriProvider.KeepParameters("/list-options") });
-      } else {
-        navigate({ to: UriProvider.KeepParameters("/") });
-      }
+      shopify.toast.show("Option saved successfully");
+      navigate({ to: UriProvider.KeepParameters("/list-options") });
       return;
     }
 
-    setMessageToShow(resp);
-    toggleActive();
+    shopify.toast.show("Failed to save option!", {
+      isError: true
+    });
   };
 
-  const toastMarkup = active ? (
-    <Toast
-      tone={"magic"}
-      error={!messageToShow?.status}
-      content={messageToShow?.message ?? "Failed to save option!"}
-      onDismiss={toggleActive}
-    />
-  ) : null;
-
   return (
-    <>
-      {toastMarkup}
-      <OptionSettingsDetail
-        option={optionState}
-        setOption={handleSetOption}
-        onSave={handleSave}
-        isSaving={isOptionSettingsLoading}
-      />
-    </>
+    <OptionSettingsDetail
+      option={optionState}
+      setOption={handleSetOption}
+      onSave={handleSave}
+      isSaving={isOptionSettingsLoading}
+    />
   );
 }

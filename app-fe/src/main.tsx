@@ -1,4 +1,4 @@
-import { AppProvider } from "@shopify/polaris";
+import { AppProvider, Frame } from "@shopify/polaris";
 import translations from "@shopify/polaris/locales/en.json";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
@@ -9,6 +9,7 @@ import "@shopify/polaris/build/esm/styles.css";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
+import { Menu } from "./layout/menu";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,9 +54,12 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <AppProvider i18n={translations}>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
+      <Menu />
+      <Frame>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </Frame>
     </AppProvider>
   );
 }

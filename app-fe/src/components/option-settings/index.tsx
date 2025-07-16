@@ -16,7 +16,7 @@ import settingStore from "@/stores/setting";
 import { positionMap } from "./detail/template";
 import { DeleteIcon } from "@shopify/polaris-icons";
 
-const OptionSettingsTable = ({ isBackList = false }) => {
+const OptionSettingsTable = () => {
   const { optionSettings, getOptionSettings, isOptionSettingsLoading, deleteOptionSetting } =
     settingStore();
 
@@ -179,9 +179,7 @@ const OptionSettingsTable = ({ isBackList = false }) => {
                       variant='primary'
                       onClick={() => {
                         navigate({
-                          to: UriProvider.KeepParameters(
-                            `/options/${option.productOptionId}?lst=${isBackList}`
-                          )
+                          to: UriProvider.KeepParameters(`/options/${option.productOptionId}`)
                         });
                       }}
                     >

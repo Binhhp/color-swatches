@@ -1,7 +1,6 @@
 import CommonApi from "@/apis/common.api";
 import EnableApp from "@/components/home/enable-app";
 import SetupGuide from "@/components/home/setup-guide";
-import OptionSettingsTable from "@/components/option-settings";
 import RecommendedApp from "@/components/recommended-app";
 import VideoTutorials from "@/components/video-tutorials";
 import rootStore from "@/stores/root";
@@ -37,12 +36,6 @@ function Index() {
       {isEnableApp !== undefined && !isEnableApp && (
         <div className='mb-5'>
           <EnableApp onDismiss={handleDismiss} />
-        </div>
-      )}
-
-      {shop?.isSettingOption && (
-        <div className='mb-5'>
-          <OptionSettingsTable />
         </div>
       )}
 

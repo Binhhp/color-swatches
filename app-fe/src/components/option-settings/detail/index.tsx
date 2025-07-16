@@ -33,11 +33,7 @@ export const OptionSettingsDetail: FC<{
   const navigate = useNavigate();
 
   const handleBack = () => {
-    if (window.location.search.includes("lst=true")) {
-      navigate({ to: UriProvider.KeepParameters("/list-options") });
-    } else {
-      navigate({ to: UriProvider.KeepParameters("/") });
-    }
+    navigate({ to: UriProvider.KeepParameters("/") });
   };
 
   const styleOptions = templateOptions.find((t) => t.value === option?.template)?.options ?? [];

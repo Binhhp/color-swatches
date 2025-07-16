@@ -14,7 +14,7 @@
   "trustedDependencies": [
     "@shopify/plugin-cloudflare"
   ],
-  "author": "Binhh",
+  "author": "Orichi",
   "private": true,
   "workspaces": [
     "extensions/*"
