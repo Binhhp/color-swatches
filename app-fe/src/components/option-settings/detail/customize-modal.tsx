@@ -231,7 +231,11 @@ export const CustomizeModal: FC<CustomizeModalProps> = ({ open, onClose, option,
     if (animation.hoverAnimation === "label" || !option?.values[0]?.image) {
       return option?.values[0]?.value;
     }
-    return <img src={option?.values[0]?.image} />;
+    return (
+      <div className='w-7 h-7'>
+        <img src={option?.values[0]?.image} />
+      </div>
+    );
   };
 
   const renderPreview = () => (

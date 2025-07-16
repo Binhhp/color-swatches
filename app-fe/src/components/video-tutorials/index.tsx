@@ -12,22 +12,28 @@ import { ChevronDownIcon, ChevronUpIcon } from "@shopify/polaris-icons";
 import React from "react";
 import tutorial from "@/assets/images/tutorials.png";
 
+import "@fancyapps/ui/dist/fancybox/fancybox.css";
+import FancyBox from "../fancybox";
+
 const VideoTutorials = () => {
   const [open, setOpen] = React.useState(true);
   const videos = [
     {
       title: "Video 1",
       thumbnailUrl: tutorial,
+      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       videoLength: 156
     },
     {
       title: "Video 2",
       thumbnailUrl: tutorial,
+      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       videoLength: 156
     },
     {
       title: "Video 3",
       thumbnailUrl: tutorial,
+      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       videoLength: 156
     }
   ];
@@ -56,12 +62,14 @@ const VideoTutorials = () => {
       >
         <div className='grid grid-cols-3 gap-4 mt-4'>
           {videos.map((video) => (
-            <VideoThumbnail
-              key={video.title}
-              videoLength={video.videoLength}
-              thumbnailUrl={video.thumbnailUrl}
-              onClick={() => console.log("clicked")}
-            />
+            <FancyBox key={video.title + "video"} src={video.videoUrl}>
+              <VideoThumbnail
+                key={video.title}
+                videoLength={video.videoLength}
+                thumbnailUrl={video.thumbnailUrl}
+                onClick={() => {}}
+              />
+            </FancyBox>
           ))}
         </div>
       </Collapsible>

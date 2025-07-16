@@ -1,19 +1,54 @@
 import { useState, type FC } from "react";
-import { IndexTable, Text, Button, LegacyCard, Icon } from "@shopify/polaris";
+import { IndexTable, Text, Button, LegacyCard, Icon, DropZone, Thumbnail } from "@shopify/polaris";
 import type { OptionSetting, OptionValue as OptionValueModel } from "@/models/common/setting.model";
 import type { IndexTableHeading } from "@shopify/polaris/build/ts/src/components/IndexTable";
 import type { NonEmptyArray } from "@shopify/polaris/build/ts/src/types";
-import { PlusIcon, UploadIcon, XIcon } from "@shopify/polaris-icons";
+import { NoteIcon, PlusIcon, UploadIcon, XIcon } from "@shopify/polaris-icons";
 import { HexColorPicker } from "react-colorful";
 
 export const OptionValue: FC<{
   option: OptionSetting;
   setOption: (options: Partial<OptionSetting>) => void;
 }> = ({ option, setOption }) => {
+  const createHandleDrop = (valueIndex: number) => {
+    return (files: File[]) => {
+      const uploadedFile = files[0];
+
+      // Convert file to base64 and set it to the option value
+      if (uploadedFile && option.values && option.values[valueIndex]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const base64String = e.target?.result as string;
+
+          const updatedValues = option.values.map((v, i) => {
+            if (i === valueIndex) {
+              return {
+                ...v,
+                image: base64String
+              };
+            }
+            return v;
+          });
+
+          setOption({
+            ...option,
+            values: updatedValues
+          });
+        };
+        reader.readAsDataURL(uploadedFile);
+      }
+    };
+  };
+
   const renderPreview = (v: OptionValueModel) => {
-    if (v.style.includes("Image")) {
-      return <img src={v.image} />;
+    if (option.style?.includes("Image")) {
+      return (
+        <div className='flex items-center option-setting-image'>
+          <Thumbnail size='small' alt='Option image' source={v.image || (NoteIcon as any)} />
+        </div>
+      );
     }
+
     return (
       <div className='option-setting-preview flex pt-1 pb-1'>
         <div
@@ -71,15 +106,14 @@ export const OptionValue: FC<{
   };
 
   const renderAction = (v: OptionValueModel, idx: number) => {
-    if (v.style.includes("Image")) {
+    if (option.style?.includes("Image")) {
       return (
-        <div className='option-setting-upload flex justify-center'>
-          <Button
-            icon={UploadIcon as any}
-            size='large'
-            variant='tertiary'
-            accessibilityLabel='Upload'
-          />
+        <div className='option-setting-upload option-setting-upload-image flex justify-center'>
+          <div style={{ width: 35, height: 35 }}>
+            <DropZone onDrop={createHandleDrop(idx)}>
+              <Icon source={UploadIcon as any} tone='subdued' />
+            </DropZone>
+          </div>
         </div>
       );
     }
@@ -197,7 +231,7 @@ export const OptionValue: FC<{
         <IndexTable
           resourceName={{ singular: "value", plural: "values" }}
           itemCount={option.values?.length ?? 0}
-          selectable
+          selectable={false}
           headings={headings}
         >
           {option.values?.map((v, idx) => (

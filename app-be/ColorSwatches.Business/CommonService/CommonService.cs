@@ -71,7 +71,7 @@ public class CommonService(
         }
         catch (Exception)
         {
-            return true;
+            return false;
         }
     }
 }

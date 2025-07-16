@@ -56,6 +56,23 @@ body {
   height: max-content;
 }
 
+.option-setting-upload-image .Polaris-DropZone {
+  width: 35px;
+  height: 35px;
+}
+
+.option-setting-upload-image .Polaris-DropZone--sizeSmall {
+  min-height: 100%;
+  background: rgba(247, 247, 247, 1);
+}
+
+.option-setting-image img {
+  width: 70%;
+  height: 70%;
+  object-fit: cover;
+  border-radius: var(--p-border-radius-200);
+}
+
 .customize-preview .Polaris-ShadowBevel {
   height: 100%;
 }

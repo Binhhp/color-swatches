@@ -33,7 +33,7 @@ export const OptionSettingsDetail: FC<{
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate({ to: UriProvider.KeepParameters("/") });
+    navigate({ to: UriProvider.KeepParameters("/list-options") });
   };
 
   const styleOptions = templateOptions.find((t) => t.value === option?.template)?.options ?? [];

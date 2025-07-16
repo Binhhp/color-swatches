@@ -56,7 +56,21 @@ function Index() {
   const handleSave = async () => {
     if (!optionState) return;
 
-    const resp = await upsertOptionSetting(optionState);
+    const requestOption = { ...optionState };
+
+    if (requestOption.values?.length) {
+      requestOption.values?.forEach((v) => {
+        if (!optionState.style?.includes("Image") && v.image) {
+          v.image = "";
+        }
+
+        if (optionState.style?.includes("Image") && v.style) {
+          v.style = "";
+        }
+      });
+    }
+
+    const resp = await upsertOptionSetting(requestOption);
 
     if (resp.status) {
       shopify.toast.show("Option saved successfully");

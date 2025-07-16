@@ -22,14 +22,14 @@ const RecommendedApp: FC = () => {
       description:
         "Create quantity breaks, volume discounts with upsell, bundle product maximize sales, limit purchase",
       thumbnailUrl: oc,
-      link: "https://www.google.com"
+      link: "https://apps.shopify.com/instafeed-instagram-feed-tiktok#modal-show=WriteReviewModal"
     },
     {
       title: "OC Quantity Breaks Order Limit",
       description:
         "Create quantity breaks, volume discounts with upsell, bundle product maximize sales, limit purchase",
       thumbnailUrl: oc,
-      link: "https://www.google.com"
+      link: "https://apps.shopify.com/instafeed-instagram-feed-tiktok#modal-show=WriteReviewModal"
     }
   ];
   return (
